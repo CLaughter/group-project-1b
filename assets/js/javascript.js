@@ -439,7 +439,7 @@ function runPage()
         //Add a clock div.
         var clockDiv = $("<div>");
         clockDiv.addClass("border clock-div station-div mr-1");
-        clockDiv.append("<p>Local Time</p>");
+        clockDiv.append("<p>Local Time:</p>");
         cardBody.append(clockDiv);
     
         var clockID = "clock-canvas" + idNum;
@@ -581,8 +581,9 @@ function runPage()
         cardBody.append(humidityDiv);
         humidityDiv.append("<p>Humidity:</p>");
         var humDiv = $("<div>");
+        humDiv.attr("id", "hum-div" + idNum);
         humidityDiv.append(humDiv);
-        setHumidity(humDiv, humidity);
+        setHumidity(humDiv.attr("id"), humidity);
 
         var humidityID  = "humidity-canvas" + idNum;
         var humidityCan = document.createElement("canvas");
@@ -598,8 +599,9 @@ function runPage()
         cardBody.append(pressureDiv);
         pressureDiv.append("<p>Pressure:</p>");
         presDiv = $("<div>");
+        presDiv.attr("id", "pres-div" + idNum);
         pressureDiv.append(presDiv);
-        setPressure(presDiv, pressure);
+        setPressure(presDiv.attr("id"), pressure);
 
         var pressureID  = "pressure-canvas" + idNum;
         var pressureCan = document.createElement("canvas");
@@ -612,9 +614,11 @@ function runPage()
         //Add a Current Conditions div.
         var currentDiv = $("<div>");
         currentDiv.addClass("border current-div station-div mr-1");
+        currentDiv.attr("id", "current-div" + idNum);
         cardBody.append(currentDiv);
         currentDiv.append("<p>Current Conditions:</p>");
         curDiv = $("<div>");
+        curDiv.attr("id", "cur-div" + idNum);
         curDiv.html("<p>" + curDesc + "</p>");
         currentDiv.append(curDiv);
         currentDiv.css('background-image',
@@ -634,6 +638,7 @@ function runPage()
         cardBody.append(visibilityDiv);
         visibilityDiv.append("<p>Visibility:</p>");
         visDiv = $("<div>");
+        visDiv.attr("id", "vis-Div" + idNum);
         visDiv.html("<p>" + (vis * 0.000621).toFixed(2) + " miles</p>");
         visibilityDiv.append(visDiv);
 
@@ -650,12 +655,12 @@ function runPage()
         infoDiv.addClass("border info-div station-div mr-1");
         cardBody.append(infoDiv);
         infoDiv.append("<p>Location</p>");
-        infoDiv.append("<p>Information:</p>");
-        infoDiv.append("Country Code: " + cntryCode + "<br>");
-        infoDiv.append("City ID: " + cityID + "<br>");
-        infoDiv.append("Latitude: " + lat + "<br>");
-        infoDiv.append("Longitude: " + lon + "<br>");
-        infoDiv.append("Timezone Offset: " + timeZone + "<br>");
+        infoDiv.append("<p>Information</p>");
+        infoDiv.append("<b>Country Code: " + cntryCode + "</b><br>");
+        infoDiv.append("<b>City ID: " + cityID + "</b><br>");
+        infoDiv.append("<b>Latitude: " + lat + "</b><br>");
+        infoDiv.append("<b>Longitude: " + lon + "</b><br>");
+        infoDiv.append("<b>Timezone Offset: " + timeZone + "</b><br>");
 
         var infoID  = "temp-canvas" + idNum;
         var infoCan = document.createElement("canvas");
@@ -699,53 +704,15 @@ function runPage()
             cldDiv.attr("id"), cltDiv.attr("id"),    
             thisTemp, tempF.attr("id"), tempC.attr("id"),   //Temperature.
             tempType, tempDiv.attr("id"), temp,
-            //Humidity.
-            //Pressure.
-            //Current conditions.
-            //Visibility.
+            setHumidity, humDiv.attr("id"),                 //Humidity.
+            setPressure, presDiv.attr("id"),                //Pressure.
+            currentDiv.attr("id"), curDiv.attr("id"),       //Current conditions.
+            visDiv.attr("id")                               //Visibility.
         );
         refresh.startRefresh();
-
-        
-
-       
-
-              
-
-                        /*
-                        //Update humidity.
-                        humidity = response.main.humidity;
-                        setHumidity(humDiv, humidity);
-
-                        //Update pressure.
-                        pressure = response.main.pressure;
-                        setPressure(presDiv, pressure);
-
-                        //Update visibility.
-                        vis = response.visibility;
-                        visDiv.html("<p>" + vis + " meters</p>");
-
-                        //Update current conditions.
-                        curDesc = response.weather[0].description;
-                        curIcon = response.weather[0].icon;
-                        curDiv.html("<p>" + curDesc + "</p>");
-                        currentDiv.css('background-image',
-                            "url('https://openweathermap.org/img/wn/" + curIcon + "@2x.png')");
-                        */
-           
-
-        
-
-
-
-
-
-
-
-        
     });
 
-     /**************************************** Refresh Class *****************************************/
+    /***************************************** Refresh Class *****************************************/
     class Refresh
     {
         constructor
@@ -760,6 +727,10 @@ function runPage()
             cldDiv, cltDiv,
             tempObject, tempF, tempC, tempType, //Temperature.
             tempDiv, currentTemp,
+            humFunction, humDiv,                //Humidity.
+            presFunction, presDiv,              //Pressure.
+            currentDiv, curDiv,                 //Current conditions.
+            visDiv                              //Visibility.
         )
         {
             this.intervalID;
@@ -803,7 +774,16 @@ function runPage()
             this.tempDiv     = tempDiv;
             this.currentTemp = currentTemp;
 
+            this.humFunction = humFunction;
+            this.humDiv      = humDiv;
 
+            this.presFunction = presFunction;
+            this.presDiv      = presDiv;
+
+            this.currentDiv = currentDiv;
+            this.curDiv     = curDiv;
+
+            this.visDiv = visDiv;
 
             this.initListener();            
         }
@@ -932,16 +912,36 @@ function runPage()
                             self.tempCalc(temp, self.C).toFixed(1) + "&#8451</p>";
                         self.tempObject.draw(temp, self.tempType);
 
+                        //Update the humidity.
+                        var humidity = response.main.humidity;
+                        self.humFunction(self.humDiv, humidity);
 
+                        //Update the pressure.
+                        var pressure = response.main.pressure;
+                        self.presFunction(self.presDiv, pressure);
+ 
+                        //Update the visibility.
+                        var vis = response.visibility;
+                        document.getElementById(self.visDiv).innerHTML = 
+                            "<p>" + (vis * 0.000621).toFixed(2) + " miles</p>";
 
-
-
+                        //Update the current conditions.
+                        var curDesc = response.weather[0].description;
+                        var curIcon = response.weather[0].icon;
+                        document.getElementById(self.curDiv).innerHTML = "<p>" + curDesc + "</p>";
+                        document.getElementById(self.currentDiv).style.background =
+                            "url('https://openweathermap.org/img/wn/" + curIcon + "@2x.png')";
+                        document.getElementById(self.currentDiv).style.backgroundSize = 
+                            "100% 100%";
+                        document.getElementById(self.currentDiv).style.backgroundColor =
+                            "rgb(226, 202, 241)";
                     }
                 });
             }
         }
     }
 
+    /*************************************** Support Functions ***************************************/
     //Convert Kelvin to Celsius or Fahrenheit
     function tempCalc(temperature, convType)
     {
@@ -951,13 +951,13 @@ function runPage()
     //Set the humidity text.
     function setHumidity(humDiv, humidity)
     {
-        humDiv.html("<p>" + humidity + "%</p>");
+        document.getElementById(humDiv).innerHTML ="<p>" + humidity + "%</p>";
     }
 
     //Set pressure text.
     function setPressure(presDiv, pressure)
     {
-        presDiv.html("<p>" + pressure + "hPa</p>");
+        document.getElementById(presDiv).innerHTML = "<p>" + pressure + "hPa</p>";
     }
 
     //Set the time of day image and text.
