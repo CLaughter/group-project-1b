@@ -30,9 +30,6 @@ var idNum = 0;    //Used to create unique IDs for weather station objects.
 const C = 0;
 const F = 1;
 
-//A hack! Used to force a reload after login or sign up. 
-localStorage.setItem("refresh", "0");
-
 /*********************************** Firebase Authentication Stuff ***********************************/
 //Capture login button clicks.
 $(document).ready(function()
@@ -53,6 +50,9 @@ function doLogout(event)
     {
         if(debug)console.log("Error Signing out");
     });
+
+    //This is a hack! Prevents a bug where multiple searches are returned after logging in.
+    location.reload();
 }
 
 //Log user in.
@@ -69,8 +69,6 @@ function doLogin(event)
         //Indicate to user any problems that might exist.
         $("#password-error").html(error.message);
     });
-
-    localStorage.setItem("refresh", "1"); 
 }
 
 //Sign up new user.
@@ -87,8 +85,6 @@ function doSignup(event)
         //Indicate to user any problems that might exist.
         $("#password-error").html(error.message);
     });
-
-    localStorage.setItem("refresh", "1");
 }
 
 //Update things based on user's status.
@@ -151,7 +147,7 @@ function runPage()
     //This is a hack! Prevents a bug where multiple searches are returned after logging in.
     if(localStorage.getItem("refresh") === "1")
     {
-        location.reload();
+        //location.reload();
     }
     
     $(document).ready(function()
