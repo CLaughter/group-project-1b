@@ -820,7 +820,7 @@ function runPage()
             tDiv.addEventListener("click", function()
             {
                 self.tempType === self.F ? self.tempType = self.C : self.tempType = self.F;
-                self.tempObject.draw(self.temp, self.tempType);
+                self.tempObject.draw(self.currentTemp, self.tempType);
                 
             });
         }
