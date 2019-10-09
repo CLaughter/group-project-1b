@@ -278,6 +278,10 @@ footer
 .info-div
 {
     background-color: rgb(205, 207, 231);
+    background-size: 100% 100%;
+    background-image: url("../images/images.png");
+    color: black;
+    font-weight: bold;
 }
 
 .refresh-div
