@@ -850,7 +850,6 @@ function runPage()
                 "<p>" + moment(localTime).format("hh:mm:ss A") + "</p>";
 
             //Update the time of day.
-            var todTime = moment(localTime).format("H");
             this.todFunction(this.todDiv, this.ttlDiv, localTime);
 
             //Here we check if the weather info needs to be updated.  The database only updates
@@ -905,7 +904,7 @@ function runPage()
 
                         //Update the temperature.
                         var temp = response.main.temp;
-                        self.temp = temp;
+                        self.currentTemp = temp;
                         document.getElementById(self.tempF).innerHTML = "<p>Fahrenheit: " + 
                             self.tempCalc(temp, self.F).toFixed(1) + "&#8457</p>";
                         document.getElementById(self.tempC).innerHTML = "<p>Celsius: " + 
