@@ -634,7 +634,7 @@ function runPage()
         cardBody.append(visibilityDiv);
         visibilityDiv.append("<p>Visibility:</p>");
         visDiv = $("<div>");
-        visDiv.html("<p>" + vis + " meters</p>");
+        visDiv.html("<p>" + (vis * 0.000621).toFixed(2) + " miles</p>");
         visibilityDiv.append(visDiv);
 
         var visID  = "visibility-canvas" + idNum;
@@ -820,7 +820,7 @@ function runPage()
             tDiv.addEventListener("click", function()
             {
                 self.tempType === self.F ? self.tempType = self.C : self.tempType = self.F;
-                self.tempObject.draw(self.temp, self.tempType);
+                self.tempObject.draw(self.currentTemp, self.tempType);
                 
             });
         }
