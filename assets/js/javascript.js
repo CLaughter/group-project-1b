@@ -30,6 +30,9 @@ var idNum = 0;    //Used to create unique IDs for weather station objects.
 const C = 0;
 const F = 1;
 
+//A hack! Used to force a reload after login or sign up. 
+localStorage.setItem("refresh", "0");
+
 /*********************************** Firebase Authentication Stuff ***********************************/
 //Capture login button clicks.
 $(document).ready(function()
@@ -66,7 +69,8 @@ function doLogin(event)
         //Indicate to user any problems that might exist.
         $("#password-error").html(error.message);
     });
-    
+
+    localStorage.setItem("refresh", "1"); 
 }
 
 //Sign up new user.
@@ -82,7 +86,9 @@ function doSignup(event)
 
         //Indicate to user any problems that might exist.
         $("#password-error").html(error.message);
-    });  
+    });
+
+    localStorage.setItem("refresh", "1");
 }
 
 //Update things based on user's status.
@@ -141,7 +147,13 @@ firebase.auth().onAuthStateChanged(function(user)
 /**************************************** Main Page Functions ****************************************/
 function runPage()
 {
-    //Capture search button click.
+
+    //This is a hack! Prevents a bug where multiple searches are returned after logging in.
+    if(localStorage.getItem("refresh") === "1")
+    {
+        location.reload();
+    }
+    
     $(document).ready(function()
     {
         $("#weather-search").on("click", validateInput);
@@ -152,6 +164,8 @@ function runPage()
     function validateInput()
     {
         event.preventDefault();
+
+        console.log("Validating");
 
         var isValid = true;
         var isZip = false;
