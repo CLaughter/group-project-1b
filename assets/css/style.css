@@ -102,6 +102,11 @@ footer
     width: 80%;
 }
 
+#instructions {
+    font-size: 14.5px;
+    text-align: center;
+}
+
 .card
 {
     margin-bottom: 20px;
