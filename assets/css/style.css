@@ -102,6 +102,10 @@ footer
     width: 80%;
 }
 
+#myModal {
+    overflow: auto;
+}
+
 .card
 {
     margin-bottom: 20px;
